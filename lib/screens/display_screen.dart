@@ -10,7 +10,7 @@ class DisplayScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 150,
-      child: Text(this.data),
+      child: Text(this.data, style: TextStyle(color: Colors.white),),
     );
   }
 }

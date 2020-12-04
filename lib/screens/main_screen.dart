@@ -1,5 +1,5 @@
-import 'package:calculator_app/screens/ButtonsScreen.dart';
-import 'package:calculator_app/screens/DisplayScreen.dart';
+import 'package:calculator_app/screens/buttons_screen.dart';
+import 'package:calculator_app/screens/display_screen.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {
@@ -8,7 +8,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  String _displayData = '';
+  String _displayData = '10000';
 
   void setDisplay() {
     setState(() {
