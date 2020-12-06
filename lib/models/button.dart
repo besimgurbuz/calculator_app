@@ -9,5 +9,6 @@ class Button {
   bool isWide;
 
   Button(this.key, this.text, this.action, {this.isWide = false});
-  Button.fromIcon(this.key, this.icon, this.action, {this.isWide = false, this.isCustom = false});
+  Button.fromIcon(this.key, this.icon, this.action,
+      {this.isWide = false, this.isCustom = false, this.text = ''});
 }
