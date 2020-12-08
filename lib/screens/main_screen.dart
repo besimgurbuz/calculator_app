@@ -35,14 +35,18 @@ class _MainScreenState extends State<MainScreen> {
         holder.add(clickedBtn);
         return holder;
       case 1: // math operand
-        if (_clickedData.last != null && _clickedData.last.action != 1) {
+        if (_clickedData.last != null &&
+            _clickedData.last.action != 1 &&
+            _clickedData.last.action != 4) {
           holder.add(clickedBtn);
           this._isCurrentNumFloat = false;
         }
         return holder;
       case 2: // calculate
-        this._displayData = calculateResult();
-        if (this._displayData.join('') == 'Infinity') {
+        String result =
+            calculateResult(this._displayData.join()).replaceAll('.', ',');
+        this._displayData = result.split('');
+        if (result == 'Infinity') {
           return [];
         }
         return this
@@ -77,19 +81,26 @@ class _MainScreenState extends State<MainScreen> {
     return holder;
   }
 
-  List<String> calculateResult() {
-    RegExp parenthesesExp = RegExp(
-        r"\(((?:\-)?[0-9]+(?:\,[0-9]+)?)([\*\/\%\+\-])([0-9]+(?:\,[0-9]+)?)\)");
+  String calculateResult(String stringData) {
+    RegExp parenthesesExp = RegExp(r"\(([0-9\*\+\-\,\/]+)\)");
     RegExp primaryOp = RegExp(
         r"((?:\-)?[0-9]+(?:\,?\.?[0-9]+)?)([\*\/\%])([0-9]+(?:\,?\.?[0-9]+)?)");
     RegExp secondaryOp = RegExp(
         r"((?:\-)?[0-9]+(?:\,?\.?[0-9]+)?)([\+\-])([0-9]+(?:\,?\.?[0-9]+)?)");
-    String stringData = this._displayData.join();
+    RegExp minusPlus = RegExp(r"([-+]{2})");
 
     String result = stringData.replaceAllMapped(parenthesesExp, (Match match) {
-      return calc(match.group(1), match.group(2), match.group(3));
+      return calculateResult(match.group(1));
     });
-
+    result = result.replaceAllMapped(minusPlus, (Match match) {
+      switch (match.group(0)) {
+        case '+-':
+          return '-';
+        case '--':
+          return '-';
+      }
+      return '';
+    });
     do {
       result = result.replaceAllMapped(primaryOp, (match) {
         return calc(match.group(1), match.group(2), match.group(3));
@@ -101,18 +112,17 @@ class _MainScreenState extends State<MainScreen> {
     } while (primaryOp.hasMatch(result) || secondaryOp.hasMatch(result));
 
     if (result == 'Infinity') {
-      return result.split('');
+      return result;
     }
 
     double doubleResult = double.parse(result);
     if (doubleResult % 1 > 0) {
-      result = result.replaceAll('.', ',');
       this._isCurrentNumFloat = true;
     } else {
       int intResult = doubleResult.toInt();
-      return "$intResult".split('');
+      return "$intResult";
     }
-    return result.split('');
+    return result;
   }
 
   String calc(String s1, String op, String s2) {
